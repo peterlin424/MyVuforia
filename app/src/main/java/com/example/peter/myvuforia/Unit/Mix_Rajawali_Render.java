@@ -38,26 +38,24 @@ public class Mix_Rajawali_Render extends org.rajawali3d.renderer.RajawaliRendere
     public void showObject3D(boolean isShow){
         WatchObj.setVisible(isShow);
     }
-    public void moveObject3D(
-            float[] vpMatrix,   // 結果矩陣
-            float[] projMatrix, // 相機矩陣
-            float[] vMatrix){   // 變形
+    public void moveObject3D(float[] vMatrix){   // 變形矩陣
         // TODO 判斷出辨識物了，但缺少模型處理
-        // float[16] Matrix to Matrix4,
-        // input : camera, vpMatrix, projMatrix, vMatrix, parentMatrix, sceneMaterial
-//        final Matrix4 pMatrix = material.getProjectionMatrix();
-//        final Matrix4 viewMatrix = material.getViewMatrix();
-//        mVPMatrix.setAll(pMatrix).multiply(viewMatrix);
-//        WatchObj.render(arcball, new Matrix4(vpMatrix), new Matrix4(projMatrix), new Matrix4(vMatrix), null, material);
+        Matrix4 newMatrix = new Matrix4(vMatrix);
 
-//        arcball.setRotation(new Matrix4(vpMatrix));
+        Vector3 translation = newMatrix.getTranslation();
+        Vector3 scale = newMatrix.getScaling();
 
-//        // rotate 45 deg
-//        Quaternion orient = new Quaternion().fromAngleAxis(Vector3.Axis.X, 45.0);
-//        WatchObj.setOrientation(orient);
+//        arcball.setProjectionMatrix(1000,2000);
+//        arcball.setPosition(translation);
 
+//        arcball.Rotaion((float)translation.x, (float)translation.y);
+//        arcball.Scaleing((float)scale.y);
+
+//        arcball.setPosition(translation);
+        arcball.setPosition(0.1f + translation.x, 40.0f + translation.y, 0.0f + translation.z);
 
     }
+
 
     @Override
     protected void initScene() {

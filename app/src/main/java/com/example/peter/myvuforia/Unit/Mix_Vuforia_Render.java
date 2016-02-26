@@ -175,8 +175,6 @@ public class Mix_Vuforia_Render implements GLSurfaceView.Renderer {
                 Matrix44F modelViewMatrix_Vuforia = Tool.convertPose2GLMatrix(result.getPose());
                 float[] modelViewMatrix = modelViewMatrix_Vuforia.getData();
 
-                int textureIndex = trackable.getName().equalsIgnoreCase("low_resolution_image") ? 0 : 1;
-
                 // deal with the modelview and projection matrices
                 float[] modelViewProjection = new float[16];
 
@@ -188,7 +186,7 @@ public class Mix_Vuforia_Render implements GLSurfaceView.Renderer {
                             OBJECT_SCALE_FLOAT, OBJECT_SCALE_FLOAT);
                 }
                 Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession.getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
-                MixAR_Activity.renderer.moveObject3D(modelViewProjection, vuforiaAppSession.getProjectionMatrix().getData(), modelViewMatrix);
+                MixAR_Activity.renderer.moveObject3D(modelViewProjection);
 
                 SampleUtils.checkGLError("Render Frame");
             }

@@ -250,6 +250,4 @@ public class ArcballCamera extends Camera {
             mIsScaling = false;
         }
     }
-
-
 }
