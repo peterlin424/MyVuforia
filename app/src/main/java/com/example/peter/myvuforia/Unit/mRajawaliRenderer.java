@@ -2,7 +2,6 @@ package com.example.peter.myvuforia.Unit;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.peter.myvuforia.R;
@@ -69,7 +68,7 @@ public class mRajawaliRenderer extends org.rajawali3d.renderer.RajawaliRenderer 
             material.enableLighting(true);
             material.setDiffuseMethod(new DiffuseMethod.Lambert());
             material.addTexture(new Texture("Watch1", R.drawable.watch001));
-//                material.addTexture(new Texture("Watch2", R.drawable.watch002));
+            material.addTexture(new Texture("Watch2", R.drawable.watch002));
             material.setColor(0x990000);
 
             monkey.setMaterial(material);

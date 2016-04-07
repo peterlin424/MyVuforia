@@ -1,6 +1,5 @@
 package com.example.peter.myvuforia.Unit;
 
-import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -8,10 +7,7 @@ import android.util.Log;
 
 import com.example.peter.myvuforia.Activity.MixAR_Activity;
 import com.example.peter.myvuforia.SampleApplication.SampleApplicationSession;
-import com.example.peter.myvuforia.SampleApplication.utils.CubeShaders;
-import com.example.peter.myvuforia.SampleApplication.utils.CubeTest2;
 import com.example.peter.myvuforia.SampleApplication.utils.LoadingDialogHandler;
-import com.example.peter.myvuforia.SampleApplication.utils.SampleApplication3DModel;
 import com.example.peter.myvuforia.SampleApplication.utils.SampleUtils;
 import com.qualcomm.vuforia.Matrix44F;
 import com.qualcomm.vuforia.Renderer;
@@ -22,7 +18,6 @@ import com.qualcomm.vuforia.TrackableResult;
 import com.qualcomm.vuforia.VIDEO_BACKGROUND_REFLECTION;
 import com.qualcomm.vuforia.Vuforia;
 
-import java.io.IOException;
 import java.util.Vector;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -37,36 +32,15 @@ public class Mix_Vuforia_Render implements GLSurfaceView.Renderer {
 
     private SampleApplicationSession vuforiaAppSession;
     private MixAR_Activity mActivity;
-    public Context context;
 
     private Vector<com.example.peter.myvuforia.SampleApplication.utils.Texture> mTextures;
-
-    private int shaderProgramID;
-
-    private int vertexHandle;
-
-    private int normalHandle;
-
-    private int textureCoordHandle;
-
-    private int mvpMatrixHandle;
-
-    private int texSampler2DHandle;
-
-    // TODO 顯示模型宣告
-//    private Teapot mTeapot;
-//    private CubeTest2 mTeapot;
-
-//    private float kBuildingScale = 12.0f;
-//    private SampleApplication3DModel mBuildingsModel;
 
     private Renderer mRenderer;
 
     public boolean mIsActive = false;
 
     // TODO 顯示模型放大倍數
-//    private static final float OBJECT_SCALE_FLOAT = 3.0f;
-    private static final float OBJECT_SCALE_FLOAT = 120.0f;
+    private static final float OBJECT_SCALE_FLOAT = 0.5f;
 
     public Mix_Vuforia_Render(MixAR_Activity activity,
                               SampleApplicationSession session)
@@ -92,9 +66,6 @@ public class Mix_Vuforia_Render implements GLSurfaceView.Renderer {
     // Function for initializing the renderer.
     private void initRendering()
     {
-        // TODO 替換顯示模型
-//      mTeapot = new Teapot();
-//        mTeapot = new CubeTest2();
 
         mRenderer = Renderer.getInstance();
 
@@ -113,32 +84,6 @@ public class Mix_Vuforia_Render implements GLSurfaceView.Renderer {
                     t.mWidth, t.mHeight, 0, GLES20.GL_RGBA,
                     GLES20.GL_UNSIGNED_BYTE, t.mData);
         }
-
-        shaderProgramID = SampleUtils.createProgramFromShaderSrc(
-                CubeShaders.CUBE_MESH_VERTEX_SHADER,
-                CubeShaders.CUBE_MESH_FRAGMENT_SHADER);
-
-        vertexHandle = GLES20.glGetAttribLocation(shaderProgramID,
-                "vertexPosition");
-        normalHandle = GLES20.glGetAttribLocation(shaderProgramID,
-                "vertexNormal");
-        textureCoordHandle = GLES20.glGetAttribLocation(shaderProgramID,
-                "vertexTexCoord");
-        mvpMatrixHandle = GLES20.glGetUniformLocation(shaderProgramID,
-                "modelViewProjectionMatrix");
-        texSampler2DHandle = GLES20.glGetUniformLocation(shaderProgramID,
-                "texSampler2D");
-
-//        try
-//        {
-//            // TODO 基礎建築模型 Buildings.txt
-//            mBuildingsModel = new SampleApplication3DModel();
-//            mBuildingsModel.loadModel(mActivity.getResources().getAssets(),
-//                    "ImageTargets/Buildings.txt");
-//        } catch (IOException e)
-//        {
-//            Log.e(LOGTAG, "Unable to load buildings");
-//        }
 
         // Hide the Loading Dialog
         mActivity.loadingDialogHandler
@@ -168,6 +113,7 @@ public class Mix_Vuforia_Render implements GLSurfaceView.Renderer {
         // TODO 檢查偵測辨識物結果 和 狀態
         // did we find any trackables this frame?
         if (state.getNumTrackableResults()>0){
+
             for(int tIdx=0; tIdx<state.getNumTrackableResults(); tIdx++){
                 TrackableResult result = state.getTrackableResult(tIdx);
                 Trackable trackable = result.getTrackable();
@@ -180,21 +126,25 @@ public class Mix_Vuforia_Render implements GLSurfaceView.Renderer {
                 // deal with the modelview and projection matrices
                 float[] modelViewProjection = new float[16];
 
-                if (!mActivity.isExtendedTrackingActive()) {
-                    MixAR_Activity.renderer.showObject3D(true);
-                    Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f,
-                            OBJECT_SCALE_FLOAT);
-                    Matrix.scaleM(modelViewMatrix, 0, OBJECT_SCALE_FLOAT,
-                            OBJECT_SCALE_FLOAT, OBJECT_SCALE_FLOAT);
-                }
+//                Matrix.translateM(modelViewMatrix, 0, 0.0f, 0.0f,
+//                        -150.0f);
+                Matrix.translateM(modelViewMatrix, 0, -100.0f, -80.0f,
+                        OBJECT_SCALE_FLOAT);
+                Matrix.rotateM(modelViewMatrix, 0, 90.0f, 1.0f, 0, 0);
+                Matrix.scaleM(modelViewMatrix, 0, OBJECT_SCALE_FLOAT,
+                        OBJECT_SCALE_FLOAT, OBJECT_SCALE_FLOAT);
+
                 Matrix.multiplyMM(modelViewProjection, 0, vuforiaAppSession.getProjectionMatrix().getData(), 0, modelViewMatrix, 0);
                 MixAR_Activity.renderer.moveObject3D(modelViewProjection, vuforiaAppSession.getProjectionMatrix().getData(), modelViewMatrix);
 
                 SampleUtils.checkGLError("Render Frame");
             }
+            MixAR_Activity.renderer.isShowObject(true);
+
         } else {
-            MixAR_Activity.renderer.showObject3D(false);
+            MixAR_Activity.renderer.isShowObject(false);
         }
+
         mRenderer.end();
     }
 
